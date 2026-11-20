@@ -2,11 +2,11 @@
 
 Audit a release manifest for failed checks, duplicate artifacts, and mismatched SHA-256 digests.
 
-**Status:** implemented browser-local research prototype. Automated tests can be reproduced with the command below. Deployment status is recorded separately; a planned URL is not proof of a working deployment.
+**Status:** implemented browser-local research prototype. Automated tests can be reproduced with the command below. GitHub Pages deployed and browser smoke checks completed on 20 November 2026.
 
 ## Website
 
-Intended GitHub Pages address: https://royalpuskar.github.io/release-evidence/
+Live website: https://royalpuskar.github.io/release-evidence/
 
 ## Problem and approach
 
@@ -79,6 +79,8 @@ Compares supplied digest strings; does not hash files, verify signatures, or aut
 The interface shares a portfolio design system, while this repository has its own domain engine, fixture, and tests. No accuracy, novelty, production-readiness, or 4K visual-test claim is made. Large-screen CSS is not a substitute for device testing.
 
 ## Validation
+
+Three local automated test cases passed on 20 November 2026. Live browser checks covered sample results, invalid-input errors, stale-export prevention, and reset. Filtering and report download were also exercised. These checks do not establish exhaustive browser coverage.
 
 `test.mjs` checks domain outcomes and edge cases, deterministic behavior, input preservation, malformed roots, and size limits. GitHub Actions runs the same suite. Review the tests themselves to see exactly what is covered; passing these checks does not establish security or exhaustive correctness.
 
