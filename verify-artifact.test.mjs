@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -40,4 +40,35 @@ test('CLI exits 0 for match, 1 for mismatch, 2 for error', async t => {
   assert.equal(JSON.parse(good.stdout).matched, true);
   assert.equal(run('0'.repeat(64)).status, 1);
   assert.equal(run('bad').status, 2);
+});
+
+test('symlinked CLI still verifies content and returns mismatch status', async t => {
+  const { dir, file } = await fixture(t);
+  const link = join(dir, 'verify-link.mjs');
+  try {
+    await symlink(cli, link, 'file');
+  } catch (error) {
+    if (process.platform === 'win32' && error.code === 'EPERM') {
+      t.skip('Windows account cannot create symlinks');
+      return;
+    }
+    throw error;
+  }
+  const run = digest => spawnSync(process.execPath, [link, file, digest], { encoding: 'utf8' });
+  const good = run(expected);
+  assert.equal(good.status, 0, good.stderr);
+  assert.equal(JSON.parse(good.stdout).matched, true);
+  const bad = run('0'.repeat(64));
+  assert.equal(bad.status, 1, bad.stderr);
+  assert.equal(JSON.parse(bad.stdout).matched, false);
+});
+test('importing the verifier has no CLI side effects', async t => {
+  const { dir } = await fixture(t);
+  const importer = join(dir, 'importer.mjs');
+  const moduleUrl = new URL('./verify-artifact.mjs', import.meta.url).href;
+  await writeFile(importer, 'import ' + JSON.stringify(moduleUrl) + ';');
+  const result = spawnSync(process.execPath, [importer], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, '');
 });
