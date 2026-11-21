@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { open } from 'node:fs/promises';
-import { constants } from 'node:fs';
-import { pathToFileURL } from 'node:url';
+import { constants, realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 // Verify an explicitly selected local regular file, without executing or uploading it.
 export async function verifyArtifact(file, expected) {
@@ -29,7 +29,17 @@ export async function verifyArtifact(file, expected) {
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+function isMainModule() {
+  if (!process.argv[1]) return false;
+  try {
+    return realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    // An importing process may have no corresponding on-disk entry point.
+    return false;
+  }
+}
+
+if (isMainModule()) {
   try {
     if (process.argv.length !== 4) throw new Error('Usage: node verify-artifact.mjs FILE EXPECTED_SHA256');
     const result = await verifyArtifact(process.argv[2], process.argv[3]);
