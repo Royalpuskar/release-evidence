@@ -8,6 +8,10 @@ Audit a release manifest for failed checks, duplicate artifacts, and mismatched 
 
 Live website: https://royalpuskar.github.io/release-evidence/
 
+## Evidence Desk (proposed extension)
+
+On this development branch, serve the repository with `python3 -m http.server 8000` and open `http://localhost:8000/investigate.html`. The new interface computes SHA-256 from a selected local file (maximum 32 MiB), compares it with a supplied independently trusted digest, identifies outstanding gates, and exports a local evidence receipt. Manual review attestations are explicitly unverified claims; the strongest result is ready for human review, not approval. File/reference changes invalidate claims. No file uploads or external API calls. Run `node --test test.mjs` for the original and new tests. The deployed website has not yet received this extension. Browser and CI validation are pending. AI-assisted development; review and challenge mapping remain pending.
+
 ## Problem and approach
 
 This tool makes the supplied developer tools scenario inspectable through explicit rules, per-item results, and exportable evidence. It runs the same pure JavaScript engine in the browser and Node tests. All input is provided by the user or the included synthetic fixture; no external facts are inferred.
