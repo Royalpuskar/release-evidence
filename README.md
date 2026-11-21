@@ -10,7 +10,16 @@ Live website: https://royalpuskar.github.io/release-evidence/
 
 ## Evidence Desk (proposed extension)
 
-On this development branch, serve the repository with `python3 -m http.server 8000` and open `http://localhost:8000/investigate.html`. The new interface computes SHA-256 from a selected local file (maximum 32 MiB), compares it with a supplied independently trusted digest, identifies outstanding gates, and exports a local evidence receipt. Manual review attestations are explicitly unverified claims; the strongest result is ready for human review, not approval. File/reference changes invalidate claims. No file uploads or external API calls. Run `node --test test.mjs` for the original and new tests. The deployed website has not yet received this extension. Browser and CI validation are pending. AI-assisted development; review and challenge mapping remain pending.
+On this development branch, serve the repository with `python3 -m http.server 8000` and open `http://localhost:8000/investigate.html`. The new interface computes SHA-256 from a selected local file (maximum 32 MiB), compares it with a supplied independently trusted digest, identifies outstanding gates, and exports a local evidence receipt. Manual review attestations are explicitly unverified claims; the strongest result is ready for human review, not approval. File/reference changes invalidate claims. No file uploads or external API calls. Run `node --test test.mjs` for the original and new tests. The deployed website has not yet received this extension. [CI run 44862596808](https://github.com/Royalpuskar/release-evidence/actions/runs/44862596808/job/136719096477) on Ubuntu / Node.js v22.23.5 tested PR head `161a63eef4733e4434925f6ebb33cd5c980bc3c7`: eight tests passed, zero failed or skipped (five investigation tests and three existing engine tests). Browser validation remains pending; subsequent commits require fresh validation. AI-assisted development; review and challenge mapping remain pending.
+
+## Reproducible investigation demo
+
+1. Open the Evidence Desk at `/investigate.html` on localhost, or HTTPS after deployment. Select **Try synthetic artifact**; it computes the SHA-256 of the three bytes `abc`. The expected digest is the published known vector in the fixture. The release decision remains blocked while human attestations are absent.
+2. Inspect the actual digest and evidence trail. Select the three manual review claims only for the fictional demonstration. The strongest result is **READY FOR HUMAN REVIEW**, never automatic approval.
+3. Change the expected digest to 64 zeroes; claims must clear and the digest comparison must report a mismatch. Even if every manual claim is selected, the release remains blocked.
+4. Restore the trusted reference and select a different file containing `abd` (no newline) to demonstrate actual byte changes. Export a receipt and inspect the recorded digest, blockers and trust limitation. No upload, real release authorization or verified reviewer identity is implied.
+
+This is a proposed browser demonstration walkthrough, not a record of executed UI tests. The automated Node tests check the underlying engine; independent browser smoke tests remain required.
 
 ## Problem and approach
 
