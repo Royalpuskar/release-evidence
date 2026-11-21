@@ -23,8 +23,8 @@ async function inspect(file){
   const current=++generation;actual='';clearClaims();render();
   $('status').textContent=file?'Computing local SHA-256…':'Select a file to compute its SHA-256.';
   if(!file)return;
-  try{const digest=await sha256(file);if(current!==generation)return;actual=digest;clearClaims();$('status').textContent='File bytes hashed locally.';}
-  catch(error){if(current!==generation)return;clearClaims();$('status').textContent=error.message;}
+  try{const digest=await sha256(file);if(current!==generation)return;actual=digest;$('status').textContent='File bytes hashed locally.';}
+  catch(error){if(current!==generation)return;$('status').textContent=error.message;}
   render();
 }
 $('artifact').addEventListener('change',()=>inspect($('artifact').files[0]));
