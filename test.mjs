@@ -5,3 +5,6 @@ import {sample} from './sample.mjs';
 test('domain behavior and boundary cases',()=>{assert.equal(run(sample).metrics.issues,2);assert.equal(run({checks:[],artifacts:[]}).metrics.passed,false);assert.throws(()=>run({checks:[],artifacts:[{path:'a',expected:'bad',actual:'bad'}]}));});
 test('deterministic result and input preservation',()=>{const copy=JSON.stringify(sample);assert.deepEqual(run(sample),run(sample));assert.equal(JSON.stringify(sample),copy);});
 test('reject malformed root and oversized input',()=>{assert.throws(()=>run(null));assert.throws(()=>run([]));assert.throws(()=>run({...sample,oversized:'x'.repeat(200001)}));});
+
+// Keep evidence-desk tests in the existing CI entry point.
+import './investigate.test.mjs';
