@@ -1,5 +1,6 @@
 """Dependency-free acceptance tests for the guard runner itself.
 Run: python scripts/test-check-guards.py
+Manual-only: the existing Node CI workflow does not execute these Python tests.
 These tests use synthetic subprocesses, not the browser.
 """
 import importlib.util
