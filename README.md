@@ -10,7 +10,7 @@ Live website: https://royalpuskar.github.io/release-evidence/
 
 ## Evidence Desk (proposed extension)
 
-On this development branch, serve the repository with `python3 -m http.server 8000` and open `http://localhost:8000/investigate.html`. The new interface computes SHA-256 from a selected local file (maximum 32 MiB), compares it with a supplied independently trusted digest, identifies outstanding gates, and exports a local evidence receipt. Manual review attestations are explicitly unverified claims; the strongest result is ready for human review, not approval. File/reference changes invalidate claims. No file uploads or external API calls. Run `node --test test.mjs verify-artifact.test.mjs` for the original and new tests. The deployed website has not yet received this extension. Browser validation remains pending; subsequent commits require fresh validation. AI-assisted development; review and challenge mapping remain pending.
+On this development branch, serve the repository with `python3 -m http.server 8000` and open `http://localhost:8000/investigate.html`. The new interface computes SHA-256 from a selected local file (maximum 32 MiB), compares it with a supplied independently trusted digest, identifies outstanding gates, and exports a local evidence receipt. Manual review attestations are explicitly unverified claims; the strongest result is ready for human review, not approval. File/reference changes invalidate claims. No file uploads or external API calls. Run `node --test test.mjs verify-artifact.test.mjs` for all three test groups: `test.mjs` directly registers the three manifest tests and imports `./investigate.test.mjs`, which registers six Evidence Desk tests (including the Node DOM-harness UI test). `verify-artifact.test.mjs` registers six CLI tests. Do not also pass `investigate.test.mjs` as a separate entry point while that import exists. The deployed website has not yet received this extension. Browser validation remains pending; subsequent commits require fresh validation. AI-assisted development; review and challenge mapping remain pending.
 
 ## Candidate verification and navigation
 
@@ -18,7 +18,7 @@ The candidate combines PR #2 (streaming CLI and verified action pins), PR #3 (Ev
 
 - [CLI usage and limitations](docs/artifact-verification.md).
 - [Factory verification map](docs/factory-verification-map.md).
-- Run the combined Node suite with `node --test test.mjs verify-artifact.test.mjs`.
+- Run the combined Node suite with `node --test test.mjs verify-artifact.test.mjs`. The explicit import in `test.mjs` includes the Evidence Desk suite in both local runs and CI (15 tests total).
 - Run `python scripts/check-guards.py` and `python scripts/test-check-guards.py` manually (Python 3.8+). Existing CI does not run these Python scripts.
 - For actual browser acceptance, install Python Playwright and Chromium on an authorized machine, then run `python scripts/browser-smoke.py`. Previous environment blocked loopback navigation; do not infer a browser pass from helper tests.
 
@@ -109,7 +109,7 @@ The interface shares a portfolio design system, while this repository has its ow
 
 **Historical main-branch baseline (20 November 2026):** three local automated test cases passed. Live browser checks of the original manifest auditor covered sample results, invalid-input errors, stale-export prevention, reset, filtering and report download. These checks do not cover Evidence Desk or the integrated candidate.
 
-`test.mjs` checks domain outcomes and edge cases, deterministic behavior, input preservation, malformed roots, and size limits. GitHub Actions runs the same suite. Review the tests themselves to see exactly what is covered; passing these checks does not establish security or exhaustive correctness.
+`test.mjs` checks domain outcomes and edge cases, deterministic behavior, input preservation, malformed roots, and size limits, and imports `./investigate.test.mjs`. GitHub Actions invokes `test.mjs` and `verify-artifact.test.mjs`, thereby running the three manifest, six Evidence Desk and six CLI tests. For revision-specific proof of this import path, [run 45004277847, job 137152278606](https://github.com/Royalpuskar/release-evidence/actions/runs/45004277847/job/137152278606) records all six named `investigation` subtests as passing (including the UI integration test), with 15 passed, zero failed and zero skipped in total for head `cbb4fbc72f1e7e49b12d5ccb3deae58834102db0` on 22 November 2026. That log is historical evidence for the cited head, not a claim of execution on later revisions. Review the tests themselves to see exactly what is covered; passing these checks does not establish security or exhaustive correctness.
 
 ## Roadmap
 
