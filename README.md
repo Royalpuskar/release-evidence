@@ -2,11 +2,36 @@
 
 Audit a release manifest for failed checks, duplicate artifacts, and mismatched SHA-256 digests.
 
-**Status:** implemented browser-local research prototype. Automated tests can be reproduced with the command below. GitHub Pages deployed and browser smoke checks completed on 20 November 2026.
+**Status:** integrated development candidate, not deployed. The existing main-branch manifest auditor was deployed and smoke-tested on 20 November 2026. The integrated candidate requires fresh combined CI, Qodo review, browser acceptance and owner approval.
 
 ## Website
 
 Live website: https://royalpuskar.github.io/release-evidence/
+
+## Evidence Desk (proposed extension)
+
+On this development branch, serve the repository with `python3 -m http.server 8000` and open `http://localhost:8000/investigate.html`. The new interface computes SHA-256 from a selected local file (maximum 32 MiB), compares it with a supplied independently trusted digest, identifies outstanding gates, and exports a local evidence receipt. Manual review attestations are explicitly unverified claims; the strongest result is ready for human review, not approval. File/reference changes invalidate claims. No file uploads or external API calls. Run `node --test test.mjs verify-artifact.test.mjs` for the original and new tests. The deployed website has not yet received this extension. [CI run 44862596808](https://github.com/Royalpuskar/release-evidence/actions/runs/44862596808/job/136719096477) on Ubuntu / Node.js v22.23.5 tested PR head `161a63eef4733e4434925f6ebb33cd5c980bc3c7`: eight tests passed, zero failed or skipped (five investigation tests and three existing engine tests). Browser validation remains pending; subsequent commits require fresh validation. AI-assisted development; review and challenge mapping remain pending.
+
+## Candidate verification and navigation
+
+The candidate combines PR #2 (streaming CLI and verified action pins), PR #3 (Evidence Desk), PR #5 (factory map), PR #6 (browser harness) and PR #8 (guard runner). The home page links to Evidence Desk. No source PR has been merged into main.
+
+- [CLI usage and limitations](docs/artifact-verification.md).
+- [Factory verification map](docs/factory-verification-map.md).
+- Run the combined Node suite with `node --test test.mjs verify-artifact.test.mjs`.
+- Run `python scripts/check-guards.py` and `python scripts/test-check-guards.py` manually (Python 3.8+). Existing CI does not run these Python scripts.
+- For actual browser acceptance, install Python Playwright and Chromium on an authorized machine, then run `python scripts/browser-smoke.py`. Previous environment blocked loopback navigation; do not infer a browser pass from helper tests.
+
+Each source PR's review and test reports are revision-specific, not evidence of this combined candidate. AI-assisted implementation; human acceptance, deployment and official hackathon submissions remain pending.
+
+## Reproducible investigation demo
+
+1. Open the Evidence Desk at `/investigate.html` on localhost, or HTTPS after deployment. Select **Try synthetic artifact**; it computes the SHA-256 of the three bytes `abc`. The expected digest is the published known vector in the fixture. The release decision remains blocked while human attestations are absent.
+2. Inspect the actual digest and evidence trail. Select the three manual review claims only for the fictional demonstration. The strongest result is **READY FOR HUMAN REVIEW**, never automatic approval.
+3. Change the expected digest to 64 zeroes; claims must clear and the digest comparison must report a mismatch. Even if every manual claim is selected, the release remains blocked.
+4. Restore the trusted reference and select a different file containing `abd` (no newline) to demonstrate actual byte changes. Export a receipt and inspect the recorded digest, blockers and trust limitation. No upload, real release authorization or verified reviewer identity is implied.
+
+This is a proposed browser demonstration walkthrough, not a record of executed UI tests. The automated Node tests check the underlying engine; independent browser smoke tests remain required.
 
 ## Problem and approach
 
@@ -33,7 +58,7 @@ python3 -m http.server 8000
 Open http://localhost:8000. Do not open index.html through a file URL; ES modules require a server.
 
 ```sh
-node --test test.mjs
+node --test test.mjs verify-artifact.test.mjs
 ```
 
 ## Example and schema
@@ -74,7 +99,7 @@ There is no application authentication, credential store, session cookie, or tok
 
 ## Limitations
 
-Compares supplied digest strings; does not hash files, verify signatures, or authenticate CI results.
+The original manifest auditor compares supplied digest strings. Evidence Desk and the CLI additionally hash local file bytes. None verifies publisher signatures or authenticates CI reports.
 
 The interface shares a portfolio design system, while this repository has its own domain engine, fixture, and tests. No accuracy, novelty, production-readiness, or 4K visual-test claim is made. Large-screen CSS is not a substitute for device testing.
 
