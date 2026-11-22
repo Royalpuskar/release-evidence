@@ -10,7 +10,7 @@ Live website: https://royalpuskar.github.io/release-evidence/
 
 ## Evidence Desk (proposed extension)
 
-On this development branch, serve the repository with `python3 -m http.server 8000` and open `http://localhost:8000/investigate.html`. The new interface computes SHA-256 from a selected local file (maximum 32 MiB), compares it with a supplied independently trusted digest, identifies outstanding gates, and exports a local evidence receipt. Manual review attestations are explicitly unverified claims; the strongest result is ready for human review, not approval. File/reference changes invalidate claims. No file uploads or external API calls. Run `node --test test.mjs verify-artifact.test.mjs` for the original and new tests. The deployed website has not yet received this extension. [CI run 44862596808](https://github.com/Royalpuskar/release-evidence/actions/runs/44862596808/job/136719096477) on Ubuntu / Node.js v22.23.5 tested PR head `161a63eef4733e4434925f6ebb33cd5c980bc3c7`: eight tests passed, zero failed or skipped (five investigation tests and three existing engine tests). Browser validation remains pending; subsequent commits require fresh validation. AI-assisted development; review and challenge mapping remain pending.
+On this development branch, serve the repository with `python3 -m http.server 8000` and open `http://localhost:8000/investigate.html`. The new interface computes SHA-256 from a selected local file (maximum 32 MiB), compares it with a supplied independently trusted digest, identifies outstanding gates, and exports a local evidence receipt. Manual review attestations are explicitly unverified claims; the strongest result is ready for human review, not approval. File/reference changes invalidate claims. No file uploads or external API calls. Run `node --test test.mjs verify-artifact.test.mjs` for the original and new tests. The deployed website has not yet received this extension. Browser validation remains pending; subsequent commits require fresh validation. AI-assisted development; review and challenge mapping remain pending.
 
 ## Candidate verification and navigation
 
@@ -105,7 +105,9 @@ The interface shares a portfolio design system, while this repository has its ow
 
 ## Validation
 
-Three local automated test cases passed on 20 November 2026. Live browser checks covered sample results, invalid-input errors, stale-export prevention, and reset. Filtering and report download were also exercised. These checks do not establish exhaustive browser coverage.
+**Historical integrated-candidate CI:** [run 45003373912, job 137149538159](https://github.com/Royalpuskar/release-evidence/actions/runs/45003373912/job/137149538159) executed `node --test test.mjs verify-artifact.test.mjs` on PR #9 head `fb44ff6709a38a5a60d24fcb99d7fc23d53df7d9` against base `a249a71ec6644d23f45038ff7050509cf03c90e6` on 22 November 2026. The logs record 15 tests, 15 passed, zero failed or skipped. This is evidence for that earlier revision only; fresh CI and Qodo review are required for subsequent commits. Python guard and browser tests are not covered by that Node run. Check [PR #9](https://github.com/Royalpuskar/release-evidence/pull/9) for current-head checks.
+
+**Historical main-branch baseline (20 November 2026):** three local automated test cases passed. Live browser checks of the original manifest auditor covered sample results, invalid-input errors, stale-export prevention, reset, filtering and report download. These checks do not cover Evidence Desk or the integrated candidate.
 
 `test.mjs` checks domain outcomes and edge cases, deterministic behavior, input preservation, malformed roots, and size limits. GitHub Actions runs the same suite. Review the tests themselves to see exactly what is covered; passing these checks does not establish security or exhaustive correctness.
 
